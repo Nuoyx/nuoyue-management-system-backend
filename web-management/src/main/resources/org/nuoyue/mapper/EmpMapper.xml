@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.nuoyue.mapper.EmpMapper">
+    <select id = "list" resultType="org.nuoyue.pojo.Emp">
+      SELECT emp.*, dept.name as deptName FROM emp LEFT JOIN dept ON emp.dept_id = dept.id
+        <where>
+            <if test="name != null">
+                AND emp.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="gender != null">
+                AND emp.gender = #{gender}
+            </if>
+            <if test="begin != null and end == null">
+                AND emp.entry_date >= #{begin}
+            </if>
+            <if test="begin == null and end != null">
+                AND emp.entry_date &lt;= #{end}
+            </if>
+            <if test="begin != null and end != null">
+                AND emp.entry_date BETWEEN #{begin} AND #{end}
+            </if>
+        </where>
+      ORDER BY emp.update_time DESC
+    </select>
+</mapper>

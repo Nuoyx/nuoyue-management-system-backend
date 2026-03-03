@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.nuoyue.mapper.EmpExprMapper">
+    <insert id = "insertBatch">
+
+        <!-- Batch insert employee work experiences -->
+        INSERT INTO emp_expr (emp_id, company, position, start_date, end_date) VALUES
+        <foreach collection="exprList" item="expr" separator=",">
+            (#{expr.empId}, #{expr.company}, #{expr.position}, #{expr.startDate}, #{expr.endDate})
+        </foreach>
+    </insert>
+</mapper>
