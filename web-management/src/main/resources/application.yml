@@ -22,3 +22,7 @@ logging:
   level:
     org.springframework.jdbc.support.jdbcTransactionManager: DEBUG
 
+aws:
+  s3:
+    bucketName: nuoyue-management-system
+    region: us-east-1
