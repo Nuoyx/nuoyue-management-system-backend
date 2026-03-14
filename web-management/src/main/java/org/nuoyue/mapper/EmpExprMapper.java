@@ -18,4 +18,10 @@ public interface EmpExprMapper {
      * Batch insert employee records
      */
     void insertBatch(List<EmpExpr> empList);
+
+
+    /*
+    * Batch delete employee records by their IDs
+    */
+    void deleteByEmpIds(List<Integer> empIds);
 }

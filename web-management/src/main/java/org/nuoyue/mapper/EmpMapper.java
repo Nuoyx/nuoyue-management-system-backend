@@ -45,4 +45,11 @@ public interface EmpMapper {
             "VALUES (#{username}, #{name}, #{gender}, #{phone}, #{job}, #{salary}, #{image}, #{entryDate}, #{deptId}, NOW(), NOW())")
     void insert(Emp emp);
 
+
+    /*
+        * Batch delete employee records by their IDs
+     */
+    void deleteByIds(@Param("ids") List<Integer> ids);
+
+    Emp getInfo(Integer id);
 }

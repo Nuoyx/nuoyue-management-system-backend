@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -35,5 +36,27 @@ public class EmpController {
         return Result.success();
 
     }
+
+
+    /*
+     * Delete employees by IDs
+     */
+    @DeleteMapping()
+    public Result delete(@RequestParam List<Integer> ids){
+        log.info("Received request to delete employees with IDs: " + ids);
+        empService.delete(ids);
+        return Result.success();
+    }
+
+    /*
+     * Get employee information by ID
+     */
+    @GetMapping("/{id}")
+    public Result getInfo(@PathVariable Integer id) {
+        log.info("Received request to get employee info with ID: " + id);
+        Emp emp = empService.getInfo(id);
+        return Result.success(emp);
+    }
+
 
 }

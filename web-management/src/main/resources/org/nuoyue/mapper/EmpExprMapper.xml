@@ -11,4 +11,11 @@
             (#{expr.empId}, #{expr.company}, #{expr.position}, #{expr.startDate}, #{expr.endDate})
         </foreach>
     </insert>
+    <delete id="deleteByEmpIds">
+        <!-- Batch delete employee work experiences by employee IDs -->
+        DELETE FROM emp_expr WHERE emp_id IN
+        <foreach collection="empIds" item="empId" open="(" separator="," close=")">
+            #{empId}
+        </foreach>
+    </delete>
 </mapper>

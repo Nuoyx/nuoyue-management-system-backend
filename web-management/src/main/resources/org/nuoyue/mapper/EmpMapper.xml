@@ -3,6 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.nuoyue.mapper.EmpMapper">
+    <delete id="deleteByIds">
+        DELETE FROM emp WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
     <select id = "list" resultType="org.nuoyue.pojo.Emp">
       SELECT emp.*, dept.name as deptName FROM emp LEFT JOIN dept ON emp.dept_id = dept.id
         <where>
@@ -23,5 +29,42 @@
             </if>
         </where>
       ORDER BY emp.update_time DESC
+    </select>
+
+    <resultMap id="empResultMap" type="org.nuoyue.pojo.Emp">
+    <id property="id" column="id"/>
+    <result property="username" column="username"/>
+    <result property="password" column="password"/>
+    <result property="name" column="name"/>
+    <result property="gender" column="gender"/>
+    <result property="phone" column="phone"/>
+    <result property="job" column="job"/>
+    <result property="salary" column="salary"/>
+    <result property="image" column="image"/>
+    <result property="entryDate" column="entry_date"/>
+    <result property="deptId" column="dept_id"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+    <collection property="exprList" ofType="org.nuoyue.pojo.EmpExpr">
+        <id property="id" column="exprId"/>
+        <result property="empId" column="exprEmpId"/>
+        <result property="startDate" column="exprStartDate"/>
+        <result property="endDate" column="exprEndDate"/>
+        <result property="company" column="exprCompany"/>
+        <result property="jobTitle" column="exprJobTitle"/>
+    </collection>
+    </resultMap>
+
+    <select id="getInfo" resultMap="empResultMap">
+        SELECT
+        emp.*,
+        emp_expr.id AS exprId,
+        emp_expr.emp_id AS exprEmpId,
+        emp_expr.start_date AS exprStartDate,
+        emp_expr.end_date AS exprEndDate,
+        emp_expr.company AS exprCompany,
+        emp_expr.job_title AS exprJobTitle
+        FROM emp LEFT JOIN emp_expr ON emp.id = emp_expr.emp_id
+        WHERE emp.id = #{id}
     </select>
 </mapper>

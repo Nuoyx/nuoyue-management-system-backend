@@ -1,6 +1,5 @@
 package org.nuoyue.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.nuoyue.mapper.EmpExprMapper;
@@ -15,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -94,4 +91,19 @@ public class EmpServiceImpl implements EmpService {
         }
         
     }
+    // Enable transaction management and specify rollback for any exception
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void delete(List<Integer> ids) {
+        // Delete employee records by IDs
+        empMapper.deleteByIds(ids);
+        empExprMapper.deleteByEmpIds(ids);
+    }
+
+    @Override
+    public Emp getInfo(Integer id) {
+        // Query employee information by ID
+        return empMapper.getInfo(id);
+    }
+
 }
