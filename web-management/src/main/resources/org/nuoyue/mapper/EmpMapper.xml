@@ -12,8 +12,8 @@
     <select id = "list" resultType="org.nuoyue.pojo.Emp">
       SELECT emp.*, dept.name as deptName FROM emp LEFT JOIN dept ON emp.dept_id = dept.id
         <where>
-            <if test="name != null">
-                AND emp.name LIKE CONCAT('%', #{name}, '%')
+            <if test="name != null and name != ''">
+                emp.name LIKE CONCAT('%', #{name}, '%')
             </if>
             <if test="gender != null">
                 AND emp.gender = #{gender}
@@ -67,4 +67,46 @@
         FROM emp LEFT JOIN emp_expr ON emp.id = emp_expr.emp_id
         WHERE emp.id = #{id}
     </select>
+    <select id="countEmpJobData" resultType="java.util.Map">
+        SELECT
+        (CASE
+        WHEN job = 1 THEN 'HR Specialist'
+        WHEN job = 2 THEN 'Software Engineer'
+        WHEN job = 3 THEN 'Accountant'
+        WHEN job = 4 THEN 'Marketing Specialist'
+        WHEN job = 5 THEN 'Sales Representative'
+        WHEN job = 6 THEN 'Research Scientist'
+        WHEN job = 7 THEN 'Support Specialist'
+        WHEN job = 8 THEN 'Operations Coordinator'
+        WHEN job = 9 THEN 'Legal Counsel'
+        WHEN job = 10 THEN 'Admin Assistant'
+        ELSE 'Other' END) AS job,
+        COUNT(*) AS count
+        FROM emp
+        GROUP BY job
+        ORDER BY count
+    </select>
+    <select id="countEmpGenderData" resultType="java.util.Map">
+        SELECT IF(gender = 1, 'Male', 'Female') AS name, COUNT(*) AS value
+        FROM emp GROUP BY gender
+    </select>
+    <update id="updateById">
+        UPDATE emp
+        <set>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="job != null">job = #{job},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="entryDate != null">entry_date = #{entryDate},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
 </mapper>

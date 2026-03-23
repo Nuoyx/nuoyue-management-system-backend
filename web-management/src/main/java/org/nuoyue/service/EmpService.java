@@ -2,6 +2,7 @@ package org.nuoyue.service;
 
 import org.nuoyue.pojo.Emp;
 import org.nuoyue.pojo.EmpQueryParam;
+import org.nuoyue.pojo.LoginInfo;
 import org.nuoyue.pojo.PageResult;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,4 +26,10 @@ public interface EmpService {
     void delete(List<Integer> ids);
 
     Emp getInfo(Integer id);
+
+    void update(Emp emp);
+
+    LoginInfo login(Emp emp);
+
+    List<Emp> list();
 }

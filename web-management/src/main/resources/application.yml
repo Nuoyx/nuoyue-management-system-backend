@@ -26,3 +26,10 @@ aws:
   s3:
     bucketName: nuoyue-management-system
     region: us-east-1
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  auto-runtime-dialect: true

@@ -6,6 +6,7 @@ import org.nuoyue.pojo.EmpQueryParam;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /*
  * Employee
@@ -52,4 +53,25 @@ public interface EmpMapper {
     void deleteByIds(@Param("ids") List<Integer> ids);
 
     Emp getInfo(Integer id);
+
+    void updateById(Emp emp);
+
+    @MapKey("job")
+    List<Map<String, Object>> countEmpJobData();
+
+    @MapKey("gender")
+    List<Map<String, Object>> countEmpGenderData();
+
+    @Select("SELECT id, username, name FROM emp WHERE username = #{username} AND password = #{password}")
+    Emp selectByUsernameAndPassword(Emp emp);
+
+    @Select("select id, username, password, name, gender, phone, job, salary, image, " +
+            "entry_date, dept_id, create_time, update_time from emp")
+    List<Emp> findAll();
+
+    /*
+     * Count the number of employees in a specific department
+     */
+    @Select("select count(*) from emp where dept_id = #{deptId}")
+    Integer countByDeptId(Integer deptId);
 }

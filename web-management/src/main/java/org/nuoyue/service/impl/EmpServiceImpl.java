@@ -1,22 +1,26 @@
 package org.nuoyue.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.nuoyue.mapper.EmpExprMapper;
 import org.nuoyue.mapper.EmpMapper;
-import org.nuoyue.pojo.Emp;
-import org.nuoyue.pojo.EmpExpr;
-import org.nuoyue.pojo.EmpQueryParam;
-import org.nuoyue.pojo.PageResult;
+import org.nuoyue.pojo.*;
+import org.nuoyue.service.EmpLogService;
 import org.nuoyue.service.EmpService;
+import org.nuoyue.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class EmpServiceImpl implements EmpService {
 
@@ -25,6 +29,9 @@ public class EmpServiceImpl implements EmpService {
 
     @Autowired
     private EmpExprMapper empExprMapper;
+
+    @Autowired
+    private EmpLogService empLogService;
 
 
 //    @Override
@@ -67,29 +74,34 @@ public class EmpServiceImpl implements EmpService {
 
         // PageHelper automatically handle pagination and return a Page object
         PageInfo<Emp> pageInfo = new PageInfo<>(empList);
-        System.out.println("Total records: " + pageInfo.getTotal());
-        return new PageResult<Emp>(pageInfo.getTotal(), pageInfo.getList());
+        return new PageResult<>(pageInfo.getTotal(), pageInfo.getList());
     }
 
-    @Transactional // Enable transaction management for this method
+    // Enable transaction management and specify rollback for any exception
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public void save(Emp emp) {
 
-        //Save the employee data to the database
-        emp.setCreateTime(LocalDateTime.now());
-        emp.setUpdateTime(LocalDateTime.now());
-        empMapper.insert(emp);
+        try {
+            //Save the employee data to the database
+            emp.setCreateTime(LocalDateTime.now());
+            emp.setUpdateTime(LocalDateTime.now());
+            empMapper.insert(emp);
 
-        //Save the employee work experience data to the database
-        List<EmpExpr> exprList = emp.getExprList();
-        if(!CollectionUtils.isEmpty(exprList)){
-            // Loop through the work experience list and set the employee ID for each record
-            for(EmpExpr expr : exprList){
-                expr.setEmpId(emp.getId());
+            //Save the employee work experience data to the database
+            List<EmpExpr> exprList = emp.getExprList();
+            if(!CollectionUtils.isEmpty(exprList)){
+                // Loop through the work experience list and set the employee ID for each record
+                for(EmpExpr expr : exprList){
+                    expr.setEmpId(emp.getId());
+                }
+                empExprMapper.insertBatch(exprList);
             }
-            empExprMapper.insertBatch(exprList);
+        } finally {
+            EmpLog empLog = new EmpLog(null, LocalDateTime.now(), "Added employee: " + emp);
+            empLogService.insertLog(empLog);
         }
-        
+
     }
     // Enable transaction management and specify rollback for any exception
     @Transactional(rollbackFor = {Exception.class})
@@ -104,6 +116,51 @@ public class EmpServiceImpl implements EmpService {
     public Emp getInfo(Integer id) {
         // Query employee information by ID
         return empMapper.getInfo(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void update(Emp emp) {
+        // Update employee information
+        emp.setUpdateTime(LocalDateTime.now());
+        empMapper.updateById(emp);
+
+        // Update employee work experience information
+        List<EmpExpr> exprList = emp.getExprList();
+        if(!CollectionUtils.isEmpty(exprList)){
+            // Loop through the work experience list and set the employee ID for each record
+            for(EmpExpr expr : exprList){
+                expr.setEmpId(emp.getId());
+            }
+            empExprMapper.deleteByEmpIds(List.of(emp.getId()));
+            empExprMapper.insertBatch(exprList);
+        }
+    }
+
+    @Override
+    public List<Emp> list() {
+        // Query all employee data
+        return empMapper.findAll();
+    }
+
+
+    @Override
+    public LoginInfo login(Emp emp) {
+        Emp e = empMapper.selectByUsernameAndPassword(emp);
+
+        if(e != null){
+            log.info("User {} logged in successfully", emp.getUsername());
+
+            // Generate JWT token for the logged-in user
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", e.getId());
+            claims.put("username", e.getUsername());
+            String jwt = JwtUtils.generateToken(claims);
+            return new LoginInfo(e.getId(), e.getUsername(), e.getName(), jwt);
+        }
+
+        // Login failed, return null or throw an exception
+        return null;
     }
 
 }

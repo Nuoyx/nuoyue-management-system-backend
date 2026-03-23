@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -36,8 +37,8 @@ public class UploadController {
     @PostMapping("/upload")
     public Result upload(MultipartFile file) throws IOException {
         log.info("Received upload request: fileName={}", file.getOriginalFilename());
-        String url = awsS3Operator.upload(file.getBytes(), file.getOriginalFilename());
-        log.info("File uploaded to S3, URL: " + url);
+        String url = awsS3Operator.upload(file.getBytes(), Objects.requireNonNull(file.getOriginalFilename()));
+        log.info("File uploaded to S3, URL: {}", url);
 
         return Result.success(url);
     }

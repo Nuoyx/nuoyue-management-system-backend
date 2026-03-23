@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.nuoyue.mapper.OperateLogMapper">
+    <select id = "list" resultType="org.nuoyue.pojo.OperateLog">
+        SELECT O.id, O.operate_emp_id AS operateEmpId, O.operate_time AS operateTime,
+        O.method_name AS methodName, O.method_params AS methodParams, O.return_value AS returnValue,
+        O.cost_time AS costTime, E.name AS operateEmpName
+        FROM operate_log AS O LEFT JOIN emp AS E ON O.operate_emp_id = E.id
+        ORDER BY O.operate_time DESC
+    </select>
+</mapper>

@@ -1,6 +1,7 @@
 package org.nuoyue.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.nuoyue.anno.Log;
 import org.nuoyue.pojo.Dept;
 import org.nuoyue.pojo.Result;
 import org.nuoyue.service.DeptService;
@@ -23,6 +24,7 @@ public class DeptController {
         return Result.success(deptList);
     }
 
+    @Log
     @DeleteMapping
     public Result delete(@RequestParam(value = "id", required = false) Integer deptId){
         System.out.println("Delete department data with id: " + deptId);
@@ -30,12 +32,14 @@ public class DeptController {
         return Result.success();
     }
 
+    @Log
     @PostMapping
     public Result insert(@RequestBody Dept dept){
         System.out.println("Insert department data: " + dept);
         deptService.insert(dept);
         return Result.success();
     }
+
 
     @GetMapping("/{id}")
     public Result getInfo(@PathVariable(value = "id", required = false) Integer deptId){
@@ -44,6 +48,7 @@ public class DeptController {
         return Result.success(dept);
     }
 
+    @Log
     @PutMapping
     public Result update(@RequestBody Dept dept){
         System.out.println("Update department data: " + dept);

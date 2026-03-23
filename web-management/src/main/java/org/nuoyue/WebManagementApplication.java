@@ -1,9 +1,13 @@
 package org.nuoyue;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.server.servlet.context.ServletComponentScan;
 
 @SpringBootApplication
+@Slf4j
+@ServletComponentScan
 public class WebManagementApplication {
 
     public static void main(String[] args) {

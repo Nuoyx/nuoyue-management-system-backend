@@ -3,6 +3,8 @@ package org.nuoyue.pojo;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+
 @Data
 public class EmpQueryParam {
     private Integer page = 1; // Default to the first page
@@ -11,7 +13,7 @@ public class EmpQueryParam {
     private Integer gender;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private String begin;
+    private LocalDate begin;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private String end;
+    private LocalDate end;
 }
